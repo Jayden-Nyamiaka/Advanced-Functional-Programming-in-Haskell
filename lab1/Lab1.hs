@@ -274,7 +274,22 @@ Fixed:
     fact n = n * fact (n - 1)
 The fact 0 is never pattern matched if fact n definition comes first.
 
-Evaluation of fact 3:
+Evaluation of incorrect fact 3:
+fact 3
+3 * fact (3 - 1) 
+3 * fact 2
+3 * 2 * fact (2 - 1)
+3 * 2 * fact 1
+3 * 2 * 1 * fact (1 - 1)
+3 * 2 * 1 * fact 0
+3 * 2 * 1 * 0 * fact (0 - 1)
+3 * 2 * 1 * 0 * fact (-1)
+3 * 2 * 1 * 0 * (-1) * fact (-1 - 1)
+3 * 2 * 1 * 0 * (-1) * fact (-2)
+3 * 2 * 1 * 0 * (-1) * (-2) * fact (-2 - 1)
+This will repeat infinitely resulting in a Stack Overflow error.
+
+Evaluation of fixed fact 3:
 fact 3
 3 * fact (3 - 1) 
 3 * fact 2
