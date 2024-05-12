@@ -35,7 +35,8 @@ infixr 3 ^||
 rangeProduct :: Integer -> Integer -> Integer
 rangeProduct a b | a > b = 
     error "rangeProduct: first arg must be less than or equal to second arg"
-rangeProduct a b = foldr (*) 1 [a..b]
+rangeProduct a b | a == b = b
+rangeProduct a b = a * rangeProduct (a + 1) b
 
 
 -- 3. prod
@@ -117,8 +118,8 @@ Therefore, the point-free and point-wise definition are equivalent.
     of 3 or 5. Write the result in a comment. You may use the Haskell sum 
     function to do the actual sum. -}
 res6 :: Integer
-res6 = sum $ filter (\x -> mod x 3 == 0 || mod x 5 == 0) [1..1000]
--- result: 234168
+res6 = sum [x | x <- [1..999], mod x 3 == 0 || mod x 5 == 0] 
+-- result: 233168
 
 -- 7. Sum of primes
 {-  Calculate the sum of all the prime numbers below 10000. -}
@@ -277,6 +278,11 @@ The fact 0 is never pattern matched if fact n definition comes first.
 Evaluation of incorrect fact 3:
 fact 3
 3 * fact (3 - 1) 
+-- Grading note:
+    I lost a point on this part previously. The comment said "3-1 doesn't
+    need to evaluate to 2." However, this is necessary because fact needs to
+    know the result in order to pattern match it to 0 or n and continue the
+    evaluation.
 3 * fact 2
 3 * 2 * fact (2 - 1)
 3 * 2 * fact 1
@@ -395,9 +401,28 @@ For reference, the following is the definition of the head function.
     head [] = error "empty list"
     head (x:_) = x
 
-head (isort [3,1,2,5,4])                [Expand isort from def]
-head (insert 3 (isort ([1,2,5,4])))     [Expand insert from def, n<m1=False]
-head (1 : insert 3 (isort ([2,5,4])))   [Evaluate head]
+head (isort [3,1,2,5,4])    
+head (insert 3 (isort ([1,2,5,4]))) 
+head (insert 3 (insert 1 (isort [2,5,4]))) 
+head (insert 3 (insert 1 (insert 2 (isort [5,4])))) 
+head (insert 3 (insert 1 (insert 2 (insert 5 (isort [4]))))) 
+head (insert 3 (insert 1 (insert 2 (insert 5 (insert 4 (isort [])))))) 
+head (insert 3 (insert 1 (insert 2 (insert 5 (insert 4 []))))) 
+head (insert 3 (insert 1 (insert 2 (insert 5 [4])))) 
+head (insert 3 (insert 1 (insert 2 (4 : insert 5 []))))
+head (insert 3 (insert 1 (insert 2 (4 : [5]))))
+head (insert 3 (insert 1 (insert 2 [4, 5])))
+head (insert 3 (insert 1 (2 : [4, 5])))
+head (insert 3 (insert 1 [2, 4, 5]))
+head (insert 3 (1 : [2, 4, 5]))
+head (insert 3 [1, 2, 4, 5])
+head (insert 3 [1, 2, 4, 5])
+head (1 : insert 3 [2, 4, 5])
+head (1 : 2 : insert 3 [4, 5])
+head (1 : 2 : 3 : [4, 5])
+head (1 : 2 : [3, 4, 5])
+head (1 : [2, 3, 4, 5])
+head [1, 2, 3, 4, 5]
 1
 Thus, head (isort [3,1,2,5,4]) = 1.
 -}
