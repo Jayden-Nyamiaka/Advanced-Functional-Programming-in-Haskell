@@ -5,7 +5,7 @@ PKGB	= -package base -package containers
 PKGC	= -package base -package containers -package array
 OPTS	= -W
 
-all: reverse columns #sudoku
+all: reverse columns sudoku
 
 reverse:
 	ghc ${OPTS} -o ${OUT_REV} Reverse.hs ${PKGB}

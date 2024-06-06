@@ -69,6 +69,7 @@ largestPalindrome = maximum $ do
     y <- [x..999]
     guard $ isPalindrome $ x * y
     return $ x * y
+-- largestPalindrome = 906609
 
 
 -- 4. A combinatorial puzzle

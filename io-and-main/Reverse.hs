@@ -29,3 +29,4 @@ usage :: IO ()
 usage = do 
     prog <- getProgName
     hPutStrLn stderr $ "usage: " ++ prog ++ " filename"
+    hPutStrLn stderr $ "  filename: string for input file"

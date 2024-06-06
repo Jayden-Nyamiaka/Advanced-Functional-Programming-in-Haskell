@@ -9,7 +9,6 @@
 
 module Main where
 
-import Debug.Trace
 import Control.Monad
 import Data.Array.IO
 import Data.Char
@@ -20,7 +19,9 @@ import qualified Data.Set as S
 
 
 usage :: IO ()
-usage = hPutStrLn stderr $ "usage: sudoku filename"
+usage = do
+  hPutStrLn stderr $ "usage: sudoku filename"
+  hPutStrLn stderr $ "  filename: string for input file"
 
 type Sudoku = IOArray (Int, Int) Int
 
@@ -58,20 +59,16 @@ readSudoku f = do
 -- If a solution is found, the board contents will have mutated to the solution.
 solveSudoku :: Sudoku -> IO Bool
 solveSudoku s = iter s (1, 1)
-  --vals <- getOKValues s (1, 1)
-  --trace (show vals) (return True)
   where
     -- Solve a Sudoku board starting from location (i, j).
     -- All "previous" locations are assumed to have been filled.
     -- If the board is solvable, return True; if not, return False.
-    -- In the latter case the board will not have changed.
+    -- In the latter case, the board will not have changed.
     -- Skip all locations that are already filled.
     iter :: Sudoku -> (Int, Int) -> IO Bool
-    iter _ (1, 3) = return False
+    iter _ (0, 0) = return True
     iter sud loc = do
       v <- readArray sud loc
-      --putStrLn (show loc)
-      --printSudoku sud 
       if v == 0 then (getOKValues sud loc) >>= (iter' sud loc)
         else iter sud $ nextLoc loc
 
@@ -83,8 +80,6 @@ solveSudoku s = iter s (1, 1)
     iter' _ _ [] = return False
     iter' sud loc (v:vs) = do
       writeArray sud loc v
-      --putStrLn (show loc)
-      --printSudoku sud
       solvable <- iter sud $ nextLoc loc
       if solvable 
         then return True
@@ -106,8 +101,7 @@ solveSudoku s = iter s (1, 1)
       cs <- getCol sud c
       bs <- getBox sud (r, c)
       let setNotOK = S.fromList $ rs ++ cs ++ bs :: S.Set Int
-      let temp = S.difference (S.fromList [1..9]) setNotOK
-      let setOK = trace ("ok: " ++ (show temp)) temp :: S.Set Int
+      let setOK = S.difference (S.fromList [1..9]) setNotOK :: S.Set Int
       return $ S.toList setOK
 
     -- Return the ith row in a Sudoku board as a list of Ints.

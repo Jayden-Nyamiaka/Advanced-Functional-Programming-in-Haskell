@@ -63,3 +63,5 @@ usage :: IO ()
 usage = do 
     prog <- getProgName
     hPutStrLn stderr $ "usage: " ++ prog ++ " nl [n2 n3 ...] filename"
+    hPutStrLn stderr $ "  nl, n2, n3, ...: positive integers"
+    hPutStrLn stderr $ "  filename: string for input file"
